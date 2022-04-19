@@ -61,7 +61,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void saveSavingsWithdrawTransaction(SavingsTransaction savingsTransaction) {
-
+        savingsTransactionRepository.save(savingsTransaction);
     }
 
     @Override
