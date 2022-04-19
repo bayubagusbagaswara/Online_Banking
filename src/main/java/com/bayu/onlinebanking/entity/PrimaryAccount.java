@@ -1,11 +1,13 @@
 package com.bayu.onlinebanking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "primary_account")
@@ -23,5 +25,9 @@ public class PrimaryAccount {
 
     @Column(name = "account_balance")
     private BigDecimal accountBalance;
+
+    @OneToMany(mappedBy = "primaryAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<PrimaryTransaction> primaryTransactionList;
 
 }
