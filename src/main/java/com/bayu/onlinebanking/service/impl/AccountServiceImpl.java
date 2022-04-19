@@ -97,7 +97,39 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void withdraw(String accountType, double amount, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
 
+        if (accountType.equalsIgnoreCase("Primary")) {
+            PrimaryAccount primaryAccount = user.getPrimaryAccount();
+            primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            primaryAccountRepository.save(primaryAccount);
+
+            PrimaryTransaction primaryTransaction = new PrimaryTransaction();
+            primaryTransaction.setDate(new Date());
+            primaryTransaction.setDescription("Withdraw from Primary Account");
+            primaryTransaction.setType("Account");
+            primaryTransaction.setStatus("Finished");
+            primaryTransaction.setAmount(amount);
+            primaryTransaction.setAvailableBalance(primaryAccount.getAccountBalance());
+            primaryTransaction.setPrimaryAccount(primaryAccount);
+
+            transactionService.savePrimaryWithdrawTransaction(primaryTransaction);
+
+        } else if (accountType.equalsIgnoreCase("Savings")) {
+            SavingsAccount savingsAccount = user.getSavingsAccount();
+            savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            savingsAccountRepository.save(savingsAccount);
+
+            SavingsTransaction savingsTransaction = new SavingsTransaction();
+            savingsTransaction.setDate(new Date());
+            savingsTransaction.setDescription("Withdraw from Savings Account");
+            savingsTransaction.setType("Account");
+            savingsTransaction.setStatus("Finished");
+            savingsTransaction.setAmount(amount);
+            savingsTransaction.setAvailableBalance(savingsAccount.getAccountBalance());
+            savingsTransaction.setSavingsAccount(savingsAccount);
+            transactionService.saveSavingsWithdrawTransaction(savingsTransaction);
+        }
     }
 
     private int accountGen() {
