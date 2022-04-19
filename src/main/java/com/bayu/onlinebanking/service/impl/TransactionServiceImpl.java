@@ -127,7 +127,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Recipient findRecipientByName(String recipientName) {
-        return null;
+        return recipientRepository.findByName(recipientName);
     }
 
     @Override
