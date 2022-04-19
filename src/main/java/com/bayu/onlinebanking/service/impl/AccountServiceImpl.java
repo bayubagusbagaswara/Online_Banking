@@ -10,6 +10,8 @@ import com.bayu.onlinebanking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.security.Principal;
 
 @Service
@@ -32,7 +34,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public PrimaryAccount createPrimaryAccount() {
-        return null;
+        PrimaryAccount primaryAccount = new PrimaryAccount();
+        primaryAccount.setAccountBalance(new BigDecimal(BigInteger.ZERO));
+        primaryAccount.setAccountNumber(accountGen());
+
+        primaryAccountRepository.save(primaryAccount);
+        return primaryAccountRepository.findByAccountNumber(primaryAccount.getAccountNumber());
     }
 
     @Override
@@ -48,5 +55,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void withdraw(String accountType, double amount, Principal principal) {
 
+    }
+
+    private int accountGen() {
+        return ++nextAccountNumber;
     }
 }
