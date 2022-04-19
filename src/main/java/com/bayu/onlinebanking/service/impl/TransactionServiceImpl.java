@@ -132,7 +132,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void deleteRecipientByName(String recipientName) {
-
+        recipientRepository.deleteByName(recipientName);
     }
 
     @Override
