@@ -137,6 +137,37 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void toSomeoneElseTransfer(Recipient recipient, String accountType, String amount, PrimaryAccount primaryAccount, SavingsAccount savingsAccount) {
+        if (accountType.equalsIgnoreCase("Primary")) {
+            // kurangi saldo primary account
+            primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            // simpan perubahan saldo primary account
+            primaryAccountRepository.save(primaryAccount);
 
+            PrimaryTransaction primaryTransaction = new PrimaryTransaction();
+            primaryTransaction.setDate(new Date());
+            primaryTransaction.setDescription("Transfer to recipient " + recipient.getName());
+            primaryTransaction.setType("Transfer");
+            primaryTransaction.setStatus("Finished");
+            primaryTransaction.setAmount(Double.parseDouble(amount));
+            primaryTransaction.setAvailableBalance(primaryAccount.getAccountBalance());
+            primaryTransaction.setPrimaryAccount(primaryAccount);
+
+            primaryTransactionRepository.save(primaryTransaction);
+
+        } else if (accountType.equalsIgnoreCase("Savings")) {
+            savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            savingsAccountRepository.save(savingsAccount);
+
+            SavingsTransaction savingsTransaction = new SavingsTransaction();
+            savingsTransaction.setDate(new Date());
+            savingsTransaction.setDescription("Transfer to recipient " + recipient.getName());
+            savingsTransaction.setType("Transfer");
+            savingsTransaction.setStatus("Finished");
+            savingsTransaction.setAmount(Double.parseDouble(amount));
+            savingsTransaction.setAvailableBalance(savingsAccount.getAccountBalance());
+            savingsTransaction.setSavingsAccount(savingsAccount);
+
+            savingsTransactionRepository.save(savingsTransaction);
+        }
     }
 }
