@@ -7,7 +7,9 @@ import com.bayu.onlinebanking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -66,7 +68,46 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void betweenAccountsTransfer(String transferFrom, String transferTo, String amount, PrimaryAccount primaryAccount, SavingsAccount savingsAccount) throws Exception {
+        // cek jenis akun asal yakni Primary dan akun tujuannya bertipe Savings
+        if (transferFrom.equalsIgnoreCase("Primary") && transferTo.equalsIgnoreCase("Savings")) {
+            // kurangi saldo di primary
+            primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            // tambahkan saldo di savings
+            savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().add(new BigDecimal(amount)));
+            // simpan perubahan saldo kedua akun
+            primaryAccountRepository.save(primaryAccount);
+            savingsAccountRepository.save(savingsAccount);
 
+            // catat transfer di transaction
+            PrimaryTransaction primaryTransaction = new PrimaryTransaction();
+            primaryTransaction.setDate(new Date());
+            primaryTransaction.setDescription("Between account transfer from " + transferFrom + " to " + transferTo);
+            primaryTransaction.setType("Account");
+            primaryTransaction.setStatus("Finished");
+            primaryTransaction.setAmount(Double.parseDouble(amount));
+            primaryTransaction.setAvailableBalance(primaryAccount.getAccountBalance());
+            primaryTransaction.setPrimaryAccount(primaryAccount);
+            primaryTransactionRepository.save(primaryTransaction);
+
+        } else if (transferFrom.equalsIgnoreCase("Savings") && transferTo.equalsIgnoreCase("Primary")) {
+            primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().add(new BigDecimal(amount)));
+            savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            primaryAccountRepository.save(primaryAccount);
+            savingsAccountRepository.save(savingsAccount);
+
+            SavingsTransaction savingsTransaction = new SavingsTransaction();
+            savingsTransaction.setDate(new Date());
+            savingsTransaction.setDescription("Between account transfer from " + transferFrom + " to " + transferTo);
+            savingsTransaction.setType("Transfer");
+            savingsTransaction.setStatus("Finished");
+            savingsTransaction.setAmount(Double.parseDouble(amount));
+            savingsTransaction.setAvailableBalance(savingsAccount.getAccountBalance());
+            savingsTransaction.setSavingsAccount(savingsAccount);
+
+            savingsTransactionRepository.save(savingsTransaction);
+        } else {
+            throw new Exception("Invalid Transfer");
+        }
     }
 
     @Override
