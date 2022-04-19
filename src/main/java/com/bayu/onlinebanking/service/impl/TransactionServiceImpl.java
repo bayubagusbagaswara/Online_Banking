@@ -39,7 +39,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<SavingsTransaction> findSavingsTransactionList(String username) {
-        return null;
+        final User user = userService.findByUsername(username);
+        final List<SavingsTransaction> savingsTransactionList = user.getSavingsAccount().getSavingsTransactionList();
+        return savingsTransactionList;
     }
 
     @Override
