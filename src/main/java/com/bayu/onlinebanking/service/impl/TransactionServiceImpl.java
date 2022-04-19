@@ -122,7 +122,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Recipient saveRecipient(Recipient recipient) {
-        return null;
+        return recipientRepository.save(recipient);
     }
 
     @Override
