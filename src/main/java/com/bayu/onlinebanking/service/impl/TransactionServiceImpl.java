@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -112,7 +113,11 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Recipient> findRecipientList(Principal principal) {
-        return null;
+        String username = principal.getName();
+        final List<Recipient> recipientList = recipientRepository.findAll().stream()
+                .filter(recipient -> username.equals(recipient.getUser().getUsername()))
+                .collect(Collectors.toList());
+        return recipientList;
     }
 
     @Override
