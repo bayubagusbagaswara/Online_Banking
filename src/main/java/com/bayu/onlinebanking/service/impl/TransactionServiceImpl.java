@@ -32,7 +32,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<PrimaryTransaction> findPrimaryTransactionList(String username) {
-        return null;
+        User user = userService.findByUsername(username);
+        final List<PrimaryTransaction> primaryTransactionList = user.getPrimaryAccount().getPrimaryTransactionList();
+        return primaryTransactionList;
     }
 
     @Override
