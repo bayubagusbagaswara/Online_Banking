@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkUserExists(String username, String email) {
-        return false;
+        return checkUsernameExists(username) || checkEmailExists(username);
     }
 
     @Override
