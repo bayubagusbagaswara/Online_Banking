@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkUsernameExists(String username) {
-        return false;
+        return null != findByUsername(username);
     }
 
     @Override
