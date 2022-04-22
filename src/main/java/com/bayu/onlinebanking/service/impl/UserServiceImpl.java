@@ -67,7 +67,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user, Set<UserRole> userRoles) {
-        return null;
+        User localUser = userRepository.findByUsername(user.getUsername());
+
+        if (localUser != null) {
+            LOG.info("User with username {} already exist. Nothing will be done. ", user.getUsername());
+
+        } else {
+            String encryptedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encryptedPassword);
+
+            for (UserRole userRole : userRoles) {
+                roleRepository.save(userRole.getRole());
+            }
+
+            user.getUserRoles().addAll(userRoles);
+
+            user.setPrimaryAccount(accountService.createPrimaryAccount());
+            user.setSavingsAccount(accountService.createSavingsAccount());
+
+            localUser = userRepository.save(user);
+        }
+        return localUser;
     }
 
     @Override
