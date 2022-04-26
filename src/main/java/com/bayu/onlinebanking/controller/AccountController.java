@@ -1,8 +1,6 @@
 package com.bayu.onlinebanking.controller;
 
-import com.bayu.onlinebanking.entity.PrimaryAccount;
-import com.bayu.onlinebanking.entity.PrimaryTransaction;
-import com.bayu.onlinebanking.entity.User;
+import com.bayu.onlinebanking.entity.*;
 import com.bayu.onlinebanking.service.AccountService;
 import com.bayu.onlinebanking.service.TransactionService;
 import com.bayu.onlinebanking.service.UserService;
@@ -43,6 +41,20 @@ public class AccountController {
 
         // balikkan ke html primaryAccount
         return "primaryAccount";
+    }
+
+    @RequestMapping("/savingsAccount")
+    public String savingsAccount(Model model, Principal principal) {
+        List<SavingsTransaction> savingsTransactionList = transactionService.findSavingsTransactionList(principal.getName());
+
+        final User user = userService.findByUsername(principal.getName());
+
+        final SavingsAccount savingsAccount = user.getSavingsAccount();
+
+        model.addAttribute("savingsAccount", savingsAccount);
+        model.addAttribute("savingsTransactionList", savingsTransactionList);
+
+        return "savingsAccount";
     }
 
 }
