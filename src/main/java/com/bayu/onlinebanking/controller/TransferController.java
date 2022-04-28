@@ -65,4 +65,14 @@ public class TransferController {
         return "recipient";
     }
 
+    @RequestMapping(value = "/recipient/save", method = RequestMethod.POST)
+    public String recipientPost(@ModelAttribute("recipient") Recipient recipient, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        recipient.setUser(user);
+        transactionService.saveRecipient(recipient);
+
+        return "redirect:/transfer/recipient";
+    }
+
+
 }
