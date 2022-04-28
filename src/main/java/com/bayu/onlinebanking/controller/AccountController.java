@@ -76,5 +76,12 @@ public class AccountController {
         return "redirect:/userFront";
     }
 
+    @RequestMapping(value = "/withdraw", method = RequestMethod.GET)
+    public String withdraw(Model model) {
+        model.addAttribute("accountType", "");
+        model.addAttribute("amount", "");
+
+        return "withdraw";
+    }
 
 }
