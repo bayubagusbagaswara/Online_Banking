@@ -103,4 +103,14 @@ public class TransferController {
 
         return "recipient";
     }
+
+    @RequestMapping(value = "/toSomeoneElse", method = RequestMethod.GET)
+    public String toSomeoneElse(Model model, Principal principal) {
+        List<Recipient> recipientList = transactionService.findRecipientList(principal);
+
+        model.addAttribute("recipientList", recipientList);
+        model.addAttribute("accountType", "");
+
+        return "toSomeoneElse";
+    }
 }
